@@ -20,24 +20,6 @@ public class JapanDef extends ApplicationAdapter {
 	public void create () {
 		batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");
-
-        try {
-            SParser sParser = new SParser();
-            TileMap map = sParser.readMap("tilemaps/test_tilemap.tmx");
-            int i[][] = map.getMap_matrix();
-            for(int x = 0; x < map.getWidth(); x++){
-                for(int y = 0; y < map.getHeight(); y++){
-                    System.out.println(i[x][y]);
-                }
-            }
-            System.out.println(map.getWidth());
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 	@Override

@@ -1,35 +1,24 @@
 package NoName;
 
 public class TileMap {
+
+    private String mapData;
+    private TileSet tileSet = new TileSet();
+
     private int width, height;
+    private long[][] map_matrix;
 
-    private int[][] map_matrix;
+    public void setMap_matrix(){
 
-    public int[][] getMap_matrix() {
-        return map_matrix;
-    }
+        map_matrix = new long[width][height];
+        mapData = mapData.replaceAll("\n", "");
+        String [] mapDataArray = mapData.split(",");
 
-    public void setMap_matrix(char[] chars, int start, int length){
-        map_matrix = new int[width][height];
-
-        String map_data = (new String(chars, start, length));
-
-//        String [] delimetres = new String[]{"\n", " "};
-//        map_data = map_data.replaceAll("\n", "");
-//        map_data = map_data.replaceAll(" ", "");
-//        String [] map_data_array = map_data.split(",");
-//        System.out.println(map_data);
-
-        map_data = map_data.replace("\n", "");
-        map_data = map_data.replace(" ", "");
-
-        String [] map_data_array = map_data.split(",");
-
-        System.out.println(map_data_array);
-    }
-
-    public void setMap_matrix(int[][] map_matrix) {
-        this.map_matrix = map_matrix;
+        for(int x = 0; x < width; x++){
+            for(int y = 0; y < height; y++){
+                map_matrix[x][y] = Long.parseLong(mapDataArray[y + x * height]);
+            }
+        }
     }
 
     public int getWidth() {
@@ -46,5 +35,21 @@ public class TileMap {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public void setMapData(String mapData) {
+        this.mapData = mapData;
+    }
+
+    public String getMapData() {
+        return mapData;
+    }
+
+    public TileSet getTileSet() {
+        return tileSet;
+    }
+
+    public void setTileSet(TileSet tileSet) {
+        this.tileSet = tileSet;
     }
 }
