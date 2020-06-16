@@ -11,15 +11,26 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class JapanDef extends ApplicationAdapter {
 	SpriteBatch batch;
-	Texture img;
+	TileMap map;
 	
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+        map = new TileMap();
+        try {
+            SParser parser = new SParser();
+            map = parser.readMap("tilemaps/test_tilemap.tmx");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        }
     }
 
 	@Override
@@ -27,13 +38,14 @@ public class JapanDef extends ApplicationAdapter {
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
-		batch.draw(img, 0, 0);
+
+		map.draw(batch);
 		batch.end();
 	}
 	
 	@Override
 	public void dispose () {
+	    map.clear();
 		batch.dispose();
-		img.dispose();
 	}
 }

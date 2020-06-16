@@ -1,8 +1,16 @@
 package NoName;
 
 public class Tile {
-    private String tilePath;
+    private String texturePath;
     private int width, height, id;
+
+    public String getTexturePath() {
+        return texturePath;
+    }
+
+    public void setTexturePath(String texturePath) {
+        this.texturePath = texturePath;
+    }
 
     public int getId() {
         return id;
@@ -10,14 +18,6 @@ public class Tile {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getTilePath() {
-        return tilePath;
-    }
-
-    public void setTilePath(String tilePath) {
-        this.tilePath = tilePath;
     }
 
     public int getWidth() {

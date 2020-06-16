@@ -8,8 +8,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
 
 public class SParser {
 
@@ -29,7 +27,7 @@ public class SParser {
         File mapFile = new File(mapPath);
         parser.parse(mapFile, mapXMLHandler);
 
-        File tileSetFile = new File(mapFile.getParent(), map.getTileSet().getPath());
+        File tileSetFile = new File(mapFile.getParentFile().getAbsolutePath(), map.getTileSet().getPath());
         TileSetXMLHandler tileSetXMLHandler = new TileSetXMLHandler(map, tileSetFile.getParent());
         parser.parse(tileSetFile, tileSetXMLHandler);
 
@@ -59,8 +57,13 @@ public class SParser {
             if(qName.equals("image")){
                 tile.setWidth(Integer.parseInt(attributes.getValue("width")));
                 tile.setHeight(Integer.parseInt(attributes.getValue("height")));
-                tile.setTilePath(tileSetPath + attributes.getValue("source"));
+                tile.setTexturePath(tileSetPath + "/" + attributes.getValue("source"));
             }
+        }
+
+        @Override
+        public void endDocument() throws SAXException {
+            map.setMap_matrix();
         }
 
         @Override
@@ -87,6 +90,8 @@ public class SParser {
             thisElement = qName;
             if(qName.equals("map")) map.setHeight(Integer.parseInt(attributes.getValue("height")));
             if(qName.equals("map")) map.setWidth(Integer.parseInt(attributes.getValue("width")));
+            if(qName.equals("map")) map.setTileHeight(Integer.parseInt(attributes.getValue("tileheight")));
+            if(qName.equals("map")) map.setTileWidth(Integer.parseInt(attributes.getValue("tilewidth")));
             if(qName.equals("tileset")) map.getTileSet().setPath(attributes.getValue("source"));
         }
 
@@ -103,7 +108,6 @@ public class SParser {
         @Override
         public void endDocument() {
             map.setMapData(stringBuilder.toString());
-            map.setMap_matrix();
         }
     }
 }
