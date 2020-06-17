@@ -3,7 +3,6 @@ package NoName;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class TileMap {
 
@@ -35,7 +34,7 @@ public class TileMap {
                 Texture texture = new Texture(tileSet.getTiles().get((int)clearId - 1).getTexturePath());
                 Sprite sprite = new Sprite(texture);
 
-                sprite.setBounds(x * 50, y * 50, 50, 50);
+                sprite.setBounds(x * 50,(height - y - 1) * 50, 50, 50);
                 sprite.setOrigin(25, 25);
 
                 if((id & horizontally) == horizontally) isHorizontally = true;
