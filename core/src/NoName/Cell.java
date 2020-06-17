@@ -1,40 +1,15 @@
 package NoName;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class Cell {
-    private Texture texture;
-    private boolean vertically, horizontally, diagonally;
+    private Sprite sprite;
 
-    public Texture getTexture() {
-        return texture;
+    public Sprite getSprite() {
+        return sprite;
     }
 
-    public void setTexture(Texture texture) {
-        this.texture = texture;
-    }
-
-    public boolean isVertically() {
-        return vertically;
-    }
-
-    public void setVertically(boolean vertically) {
-        this.vertically = vertically;
-    }
-
-    public boolean isHorizontally() {
-        return horizontally;
-    }
-
-    public void setHorizontally(boolean horizontally) {
-        this.horizontally = horizontally;
-    }
-
-    public boolean isDiagonally() {
-        return diagonally;
-    }
-
-    public void setDiagonally(boolean diagonally) {
-        this.diagonally = diagonally;
+    public void setSprite(Sprite sprite) {
+        this.sprite = sprite;
     }
 }

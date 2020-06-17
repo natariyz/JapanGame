@@ -45,7 +45,6 @@ public class JapanDef extends ApplicationAdapter {
 	
 	@Override
 	public void dispose () {
-	    map.clear();
 		batch.dispose();
 	}
 }

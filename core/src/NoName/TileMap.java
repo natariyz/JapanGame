@@ -1,7 +1,9 @@
 package NoName;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class TileMap {
 
@@ -10,34 +12,42 @@ public class TileMap {
 
     private int width, height;
     private int tileWidth, tileHeight;
-    private long[][] mapMatrix;
     private Cell[][] cells;
 
     public void setMap_matrix(){
-        mapMatrix = new long[width][height];
         cells = new Cell[width][height];
+
+        long horizontally = 0x80000000L;
+        long vertically = 0x40000000L;
+        long diagonally = 0x20000000L;
+        boolean isHorizontally = false, isVertically = false, isDiagonally = false;
 
         mapData = mapData.replaceAll("\n", "");
         String [] mapDataArray = mapData.split(",");
 
         for(int x = 0; x < width; x++){
             for(int y = 0; y < height; y++){
-                mapMatrix[x][y] = Long.parseLong(mapDataArray[y + x * height]);
-            }
-        }
+                long id = Long.parseLong(mapDataArray[y * width + x]);
+                long clearId = id & ~(horizontally | vertically | diagonally);
 
-        long horizontally = 0x80000000L;
-        long vertically = 0x40000000L;
-        long diagonally = 0x20000000L;
-
-        for(int x = 0; x < width; x++){
-            for(int y = 0; y < height; y++){
-                long clearId = mapMatrix[x][y] &= ~(horizontally | vertically | diagonally);
                 cells[x][y] = new Cell();
-                cells[x][y].setTexture(new Texture(tileSet.getTiles().get((int)clearId - 1).getTexturePath()));
-                if((mapMatrix[x][y] & horizontally) == horizontally) cells[x][y].setHorizontally(true);
-                if((mapMatrix[x][y] & vertically) == vertically) cells[x][y].setVertically(true);
-                if((mapMatrix[x][y] & diagonally) == diagonally) cells[x][y].setDiagonally(true);
+
+                Texture texture = new Texture(tileSet.getTiles().get((int)clearId - 1).getTexturePath());
+                Sprite sprite = new Sprite(texture);
+
+                sprite.setBounds(x * 50, y * 50, 50, 50);
+                sprite.setOrigin(25, 25);
+
+                if((id & horizontally) == horizontally) isHorizontally = true;
+                if((id & vertically) == vertically) isVertically = true;
+                if((id & diagonally) == diagonally) isDiagonally = true;
+
+                if(isDiagonally) sprite.rotate(90);
+                sprite.flip(isHorizontally, isVertically);
+
+                cells[x][y].setSprite(sprite);
+
+                isHorizontally = isVertically = isDiagonally = false;
             }
         }
     }
@@ -45,15 +55,7 @@ public class TileMap {
     public void draw(SpriteBatch batch){
         for (int x = 0; x < width; x++){
             for(int y = 0; y < height; y++){
-              batch.draw(cells[x][y].getTexture(), x * tileWidth, y * tileHeight);
-            }
-        }
-    }
-
-    public void clear(){
-        for (int x = 0; x < width; x++){
-            for(int y = 0; y < height; y++){
-                cells[x][y].getTexture().dispose();
+                cells[x][y].getSprite().draw(batch);
             }
         }
     }
