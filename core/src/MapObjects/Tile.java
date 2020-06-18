@@ -1,4 +1,4 @@
-package NoName;
+package MapObjects;
 
 public class Tile {
     private String texturePath;

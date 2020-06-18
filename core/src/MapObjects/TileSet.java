@@ -1,4 +1,4 @@
-package NoName;
+package MapObjects;
 
 import java.util.ArrayList;
 

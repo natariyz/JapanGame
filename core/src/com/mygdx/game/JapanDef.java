@@ -1,17 +1,15 @@
 package com.mygdx.game;
 
-import NoName.SParser;
-import NoName.TileMap;
+import MapObjects.MapReader;
+import MapObjects.TileMap;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class JapanDef extends ApplicationAdapter {
 	SpriteBatch batch;
@@ -22,7 +20,7 @@ public class JapanDef extends ApplicationAdapter {
 		batch = new SpriteBatch();
         map = new TileMap();
         try {
-            SParser parser = new SParser();
+            MapReader parser = new MapReader();
             map = parser.readMap("tilemaps/test_tilemap.tmx");
         } catch (IOException e) {
             e.printStackTrace();
