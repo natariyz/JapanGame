@@ -1,0 +1,23 @@
+<DefenceLevel id="level_1" defaultSpawnDelay="1" map="../tilemaps/test_tilemap.tmx">
+	<waves>
+		<DefenceWave startTime="0" spawnDelay="3">
+			<enemyGroups>
+				<EnemyGroup enemyId="testEnemy1" count="10"/>
+				<EnemyGroup enemyId="testEnemy2" count="5"/>
+				<EnemyGroup enemyId="testEnemy1" count="7"/>
+			</enemyGroups>
+		</DefenceWave>
+		
+		<DefenceWave startTime="120" spawnDelay="5">
+			<enemyGroups>
+				<EnemyGroup enemyId="testEnemy3" count="3"/>
+			</enemyGroups>
+		</DefenceWave>
+		
+		<DefenceWave>
+			<enemyGroups>
+				<EnemyGroup enemyId="testEnemy2" count="5"/>
+			</enemyGroups>
+		</DefenceWave>
+	</waves>
+</DefenceLevel>
