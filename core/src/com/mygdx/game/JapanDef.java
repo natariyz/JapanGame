@@ -5,10 +5,10 @@ import MapObjects.TileMap;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -22,15 +22,16 @@ public class JapanDef extends ApplicationAdapter {
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
 
+	final float cameraRotationSpeed = 0.05f;
+
 	public JapanDef(GameConfig gameConfig) {
 		this.gameConfig = gameConfig;
 	}
 
 	@Override
 	public void create () {
-		batch = new SpriteBatch();
-        map = new TileMap();
 
+		batch = new SpriteBatch();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, gameConfig.getScreenWidth(), gameConfig.getScreenHeight());
 
@@ -44,7 +45,9 @@ public class JapanDef extends ApplicationAdapter {
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         }
-    }
+
+		Gdx.input.setInputProcessor(new GameScreenInputProcessor());
+	}
 
 	@Override
 	public void render () {
@@ -67,58 +70,38 @@ public class JapanDef extends ApplicationAdapter {
 	}
 
 	private void handleInput() {
-
-		Vector2 lowestCameraBorder = new Vector2(camera.viewportWidth / 2, camera.viewportHeight / 2);
-		Vector2	highestCameraBorder = new Vector2(
-				map.getWidth() * map.getTileWidth() - camera.viewportWidth / 2,
-				map.getHeight() * map.getTileHeight() - camera.viewportHeight / 2);
-		Vector2 cameraSpeed = new Vector2(gameConfig.getScreenWidth() / 100, gameConfig.getScreenHeight() / 100);
-
-		float rotationSpeed = 0.05f;
-
 		if(Gdx.input.isKeyPressed(Input.Keys.A)) {
 			camera.zoom += 0.02;
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.Q)) {
 			camera.zoom -= 0.02;
 		}
-		if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-			if (camera.position.x > lowestCameraBorder.x){
-				camera.translate(-cameraSpeed.x, 0, 0);
-				if(camera.position.x < lowestCameraBorder.x){
-					camera.position.set(lowestCameraBorder.x, camera.position.y, 0);
-				}
-			}
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			if (camera.position.x < highestCameraBorder.x){
-				camera.translate(cameraSpeed.x, 0, 0);
-				if(camera.position.x > highestCameraBorder.x){
-					camera.position.set(highestCameraBorder.x, camera.position.y, 0);
-				}
-			}
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-			if (camera.position.y > lowestCameraBorder.y){
-				camera.translate(0, -cameraSpeed.y, 0);
-				if(camera.position.y < lowestCameraBorder.y){
-					camera.position.set(camera.position.x, lowestCameraBorder.y, 0);
-				}
-			}
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
-			if (camera.position.y < highestCameraBorder.y){
-				camera.translate(0, cameraSpeed.y, 0);
-				if(camera.position.y > highestCameraBorder.y){
-					camera.position.set(camera.position.x, highestCameraBorder.y, 0);
-				}
-			}
-		}
+
 		if(Gdx.input.isKeyPressed(Input.Keys.W)) {
-			camera.rotate(-rotationSpeed, 0, 0, 1);
+			camera.rotate(-cameraRotationSpeed, 0, 0, 1);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.E)) {
-			camera.rotate(rotationSpeed, 0, 0, 1);
+			camera.rotate(cameraRotationSpeed, 0, 0, 1);
+		}
+	}
+
+	private class GameScreenInputProcessor extends InputAdapter {
+
+		private int lastTouchDraggedX, lastTouchDraggedY;
+
+		@Override
+		public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+			lastTouchDraggedX = screenX;
+			lastTouchDraggedY = screenY;
+			return false;
+		}
+
+		@Override
+		public boolean touchDragged(int screenX, int screenY, int pointer) {
+			camera.translate(lastTouchDraggedX - screenX, -(lastTouchDraggedY - screenY));
+			lastTouchDraggedX = screenX;
+			lastTouchDraggedY = screenY;
+			return false;
 		}
 	}
 }

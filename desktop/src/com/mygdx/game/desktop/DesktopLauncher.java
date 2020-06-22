@@ -20,8 +20,6 @@ public class DesktopLauncher {
 		config.width = gameConfig.getScreenWidth();
 		config.height = gameConfig.getScreenHeight();
 		new LwjglApplication(new JapanDef(gameConfig), config);
-		System.out.println(config.width);
-		System.out.println(config.height);
 	}
 
 	private final static GameConfig.ConfigLoader desktopConfigLoader = new GameConfig.ConfigLoader() {

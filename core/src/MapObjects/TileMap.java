@@ -34,7 +34,7 @@ public class TileMap {
                 Texture texture = new Texture(tileSet.getTiles().get((int)cleanId - 1).getTexturePath());
                 Sprite sprite = new Sprite(texture);
 
-                sprite.setBounds(x * tileWidth,(height - y - 1) * tileHeight, tileWidth, tileHeight); //TODO рисовать тайлы в полном размере
+                sprite.setBounds(x * tileWidth,(height - y - 1) * tileHeight, tileWidth, tileHeight);
                 sprite.setOrigin(tileWidth / 2, tileHeight / 2);
 
                 isFlippedHorizontally = (id & flippedHorizontallyFlag) == flippedHorizontallyFlag;

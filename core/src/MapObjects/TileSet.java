@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class TileSet {
 
     private String path;
-    private ArrayList<Tile> tiles = new ArrayList<>();
+    private ArrayList<Tile> tiles = new ArrayList();
 
     public String getPath() {
         return path;
