@@ -19,7 +19,7 @@ public class TileMap {
     public void initializeCells(String mapData){
         cells = new Cell[width][height];
 
-        boolean isFlippedHorizontally = false, isFlippedVertically = false, isFlippedDiagonally = false;
+        boolean isFlippedHorizontally, isFlippedVertically, isFlippedDiagonally;
 
         mapData = mapData.replaceAll("\n", "");
         String [] mapDataArray = mapData.split(",");
@@ -34,8 +34,8 @@ public class TileMap {
                 Texture texture = new Texture(tileSet.getTiles().get((int)cleanId - 1).getTexturePath());
                 Sprite sprite = new Sprite(texture);
 
-                sprite.setBounds(x * 50,(height - y - 1) * 50, 50, 50); //TODO рисовать тайлы в полном размере
-                sprite.setOrigin(25, 25);
+                sprite.setBounds(x * tileWidth,(height - y - 1) * tileHeight, tileWidth, tileHeight);
+                sprite.setOrigin(tileWidth / 2, tileHeight / 2);
 
                 isFlippedHorizontally = (id & flippedHorizontallyFlag) == flippedHorizontallyFlag;
                 isFlippedVertically = (id & flippedVerticallyFlag) == flippedVerticallyFlag;
