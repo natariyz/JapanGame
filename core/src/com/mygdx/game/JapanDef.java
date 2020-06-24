@@ -4,7 +4,6 @@ import MapObjects.MapReader;
 import MapObjects.TileMap;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -21,8 +20,6 @@ public class JapanDef extends ApplicationAdapter {
 
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
-
-	final float cameraRotationSpeed = 0.05f;
 
 	public JapanDef(GameConfig gameConfig) {
 		this.gameConfig = gameConfig;
@@ -51,8 +48,6 @@ public class JapanDef extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		handleInput();
-
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 
@@ -69,25 +64,15 @@ public class JapanDef extends ApplicationAdapter {
 		batch.dispose();
 	}
 
-	private void handleInput() {
-		if(Gdx.input.isKeyPressed(Input.Keys.A)) {
-			camera.zoom += 0.02;
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.Q)) {
-			camera.zoom -= 0.02;
-		}
-
-		if(Gdx.input.isKeyPressed(Input.Keys.W)) {
-			camera.rotate(-cameraRotationSpeed, 0, 0, 1);
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.E)) {
-			camera.rotate(cameraRotationSpeed, 0, 0, 1);
-		}
-	}
-
 	private class GameScreenInputProcessor extends InputAdapter {
 
 		private int lastTouchDraggedX, lastTouchDraggedY;
+
+		@Override
+		public boolean scrolled(int amount) {
+			camera.zoom += 0.02 * amount;
+			return false;
+		}
 
 		@Override
 		public boolean touchDown(int screenX, int screenY, int pointer, int button) {
