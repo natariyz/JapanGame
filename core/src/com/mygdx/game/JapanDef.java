@@ -1,7 +1,7 @@
 package com.mygdx.game;
 
-import MapObjects.MapReader;
-import MapObjects.TileMap;
+import LevelObjects.Level;
+import LevelObjects.LevelReader;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -17,7 +17,7 @@ import java.io.IOException;
 public class JapanDef extends ApplicationAdapter {
 	private GameConfig gameConfig;
 
-	private TileMap map;
+	private Level level;
 
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
@@ -36,8 +36,8 @@ public class JapanDef extends ApplicationAdapter {
         camera.setToOrtho(false, gameConfig.getScreenWidth(), gameConfig.getScreenHeight());
 
         try {
-            MapReader parser = new MapReader();
-            map = parser.readMap("tilemaps/test_tilemap.tmx");
+            LevelReader parser = new LevelReader();
+            level = parser.readLevel("levels/level_1.xml");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SAXException e) {
@@ -60,7 +60,7 @@ public class JapanDef extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 
-		map.draw(batch);
+		level.getMap().draw(batch);
 		batch.end();
 	}
 	

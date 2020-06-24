@@ -1,0 +1,7 @@
+<Enemies>
+	<enemies>
+		<Enemy id="testEnemy1" hp="50" moveSpeed="10" image="images/easyEnemy.png"/>
+		<Enemy id="testEnemy2" hp="100" moveSpeed="7" image="images/middleEnemy.png"/>
+		<Enemy id="testEnemy3" hp="200" moveSpeed="5" image="images/hardEnemy.png"/>
+	</enemies>
+</Enemies>

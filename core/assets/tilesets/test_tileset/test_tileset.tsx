@@ -6,8 +6,18 @@
  </tile>
  <tile id="1">
   <image width="256" height="256" source="90_left_road.png"/>
+  <objectgroup draworder="index" id="2">
+   <object id="3" x="0" y="0">
+    <polyline points="131,0 123,82 0,134"/>
+   </object>
+  </objectgroup>
  </tile>
  <tile id="2">
   <image width="256" height="256" source="straight_road.png"/>
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="123" y="-1">
+    <polyline points="0,0 4,256"/>
+   </object>
+  </objectgroup>
  </tile>
 </tileset>
