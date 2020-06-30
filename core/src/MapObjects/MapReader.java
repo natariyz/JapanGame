@@ -1,5 +1,6 @@
 package MapObjects;
 
+import com.badlogic.gdx.math.Vector2;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -63,6 +64,20 @@ public class MapReader {
                 tile.setHeight(Integer.parseInt(attributes.getValue("height")));
                 tile.setTexturePath(tileSetPath + "/" + attributes.getValue("source"));
             }
+            if(qName.equals("object")){
+                tile.setMainPoint(new Vector2(
+                        Float.parseFloat(attributes.getValue("x")),
+                        Float.parseFloat(attributes.getValue("y"))
+                ));
+            }
+            if(qName.equals("polyline")){
+                String allPoints = attributes.getValue("points");
+                String [] splitedPoints = allPoints.split(" ");
+                for(int index = 0; index < splitedPoints.length; index++){
+                    String [] point = splitedPoints[index].split(",");
+                    tile.getPoints().add(new Vector2(Float.parseFloat(point[0]), Float.parseFloat(point[1])));
+                }
+            }
         }
 
         @Override
@@ -88,12 +103,22 @@ public class MapReader {
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             currentElement = qName;
             if(qName.equals("map")){
-                map.setHeight(Integer.parseInt(attributes.getValue("height")));
-                map.setWidth(Integer.parseInt(attributes.getValue("width")));
+                map.setMapHeight(Integer.parseInt(attributes.getValue("height")));
+                map.setMapWidth(Integer.parseInt(attributes.getValue("width")));
                 map.setTileHeight(Integer.parseInt(attributes.getValue("tileheight")));
                 map.setTileWidth(Integer.parseInt(attributes.getValue("tilewidth")));
             }
             if(qName.equals("tileset")) map.getTileSet().setPath(attributes.getValue("source"));
+            if(qName.equals("object")){
+                if (attributes.getValue("type").equals("startPoint")){
+                    map.setStartCellX((int)Float.parseFloat(attributes.getValue("x")) / map.getTileWidth());
+                    map.setStartCellY((int)Float.parseFloat(attributes.getValue("y")) / map.getTileHeight());
+                }
+                if (attributes.getValue("type").equals("endPoint")){
+                    map.setEndCellX((int) Float.parseFloat(attributes.getValue("x")) / map.getTileWidth());
+                    map.setEndCellY((int) Float.parseFloat(attributes.getValue("y")) / map.getTileHeight());
+                }
+            }
         }
 
         @Override

@@ -2,13 +2,14 @@ package com.mygdx.game;
 
 import LevelObjects.Level;
 import LevelObjects.LevelReader;
+import MapObjects.Cell;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -21,8 +22,7 @@ public class JapanDef extends ApplicationAdapter {
 
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
-
-	final float cameraRotationSpeed = 0.05f;
+	private ShapeRenderer shapeRenderer;
 
 	public JapanDef(GameConfig gameConfig) {
 		this.gameConfig = gameConfig;
@@ -31,6 +31,7 @@ public class JapanDef extends ApplicationAdapter {
 	@Override
 	public void create () {
 
+		shapeRenderer = new ShapeRenderer();
 		batch = new SpriteBatch();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, gameConfig.getScreenWidth(), gameConfig.getScreenHeight());
@@ -51,7 +52,7 @@ public class JapanDef extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		handleInput();
+		level.createEnemy();
 
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
@@ -60,7 +61,25 @@ public class JapanDef extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 
-		level.getMap().draw(batch);
+		level.update(0.0001);
+		level.draw(batch);
+
+		shapeRenderer.setProjectionMatrix(camera.combined);
+		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+		shapeRenderer.setColor(0, 1, 0, 1);
+
+		for(int x = 0; x < level.getMap().getCells().length; x++){
+			for (int y = 0; y < level.getMap().getCells()[0].length; y++){
+				Cell cell = level.getMap().getCells()[x][y];
+				if(cell.getPoints() != null){
+					for(int point = 0; point < cell.getPoints().size(); point++){
+						shapeRenderer.circle(cell.getPoints().get(point).x, cell.getPoints().get(point).y, 5);
+					}
+				}
+			}
+		}
+
+		shapeRenderer.end();
 		batch.end();
 	}
 	
@@ -69,25 +88,15 @@ public class JapanDef extends ApplicationAdapter {
 		batch.dispose();
 	}
 
-	private void handleInput() {
-		if(Gdx.input.isKeyPressed(Input.Keys.A)) {
-			camera.zoom += 0.02;
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.Q)) {
-			camera.zoom -= 0.02;
-		}
-
-		if(Gdx.input.isKeyPressed(Input.Keys.W)) {
-			camera.rotate(-cameraRotationSpeed, 0, 0, 1);
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.E)) {
-			camera.rotate(cameraRotationSpeed, 0, 0, 1);
-		}
-	}
-
 	private class GameScreenInputProcessor extends InputAdapter {
 
 		private int lastTouchDraggedX, lastTouchDraggedY;
+
+		@Override
+		public boolean scrolled(int amount) {
+			camera.zoom += 0.1 * amount;
+			return false;
+		}
 
 		@Override
 		public boolean touchDown(int screenX, int screenY, int pointer, int button) {
