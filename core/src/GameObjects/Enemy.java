@@ -21,21 +21,32 @@ public class Enemy {
         return enemy;
     }
 
-    public void move(ArrayList<Vector2> path, double time){
+    public boolean move(ArrayList<Vector2> path, float time){
+        if(movingToPoint == path.size() - 1) return true;
         Vector2 from = path.get(movingToPoint), to = path.get(movingToPoint + 1);
-        double distance = time * moveSpeed;
+        float distance = time * moveSpeed * 2;
 
         double sin = TileMap.findPointDistance(from, to) / Math.abs(from.x - to.x);
         double cos = TileMap.findPointDistance(from, to) / Math.abs(from.y - to.y);
 
         if(distance > TileMap.findPointDistance(new Vector2(sprite.getX(), sprite.getY()), to)){
+
+            float timeLeft = (float)(distance - TileMap.findPointDistance(new Vector2(sprite.getX(), sprite.getY()), to)) / moveSpeed;
+
+            sprite.setPosition(to.x, to.y);
+
             movingToPoint += 1;
-            move(path, distance - TileMap.findPointDistance(new Vector2(sprite.getX(), sprite.getY()), to) / moveSpeed);
-            return;
+
+            move(path, timeLeft);
+
+            return false;
         }
 
-        sprite.setX(sprite.getX() + (to.x - from.x > 0 ? (float)(distance / sin) : -(float)(distance / sin)));
-        sprite.setY(sprite.getY() + (to.y - from.y > 0 ? (float)(distance / cos) : -(float)(distance / cos)));
+        sprite.translate(
+                to.x - from.x > 0 ? (float)(distance / sin) : -(float)(distance / sin),
+                to.y - from.y > 0 ? (float)(distance / cos) : -(float)(distance / cos));
+
+        return false;
     }
 
     public String getId() {

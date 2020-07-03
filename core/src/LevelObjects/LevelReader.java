@@ -108,14 +108,13 @@ public class LevelReader {
                     }
                     defenceWave.setStartTime(startTime);
                 }
-
             }
 
             if(qName.equals("EnemyGroup")){
                 enemyGroup = new EnemyGroup();
                 enemyGroup.setCount(Integer.parseInt(attributes.getValue("count")));
                 for(int enemyIndex = 0; enemyIndex < enemies.size(); enemyIndex++){
-                    if(attributes.getValue("enemyId").equals(enemies.get(enemyIndex))){
+                    if(attributes.getValue("enemyId").equals(enemies.get(enemyIndex).getId())){
                         enemyGroup.setEnemy(enemies.get(enemyIndex).copy());
                     }
                 }

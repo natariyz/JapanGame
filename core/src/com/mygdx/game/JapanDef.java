@@ -23,6 +23,7 @@ public class JapanDef extends ApplicationAdapter {
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
 	private ShapeRenderer shapeRenderer;
+	private long startTime;
 
 	public JapanDef(GameConfig gameConfig) {
 		this.gameConfig = gameConfig;
@@ -48,12 +49,12 @@ public class JapanDef extends ApplicationAdapter {
         }
 
 		Gdx.input.setInputProcessor(new GameScreenInputProcessor());
+
+        startTime = System.currentTimeMillis();
 	}
 
 	@Override
 	public void render () {
-		level.createEnemy();
-
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 
@@ -61,8 +62,10 @@ public class JapanDef extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 
-		level.update(0.0001);
+		level.update((System.currentTimeMillis() - startTime) / 1000);
 		level.draw(batch);
+
+		batch.end();
 
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -80,7 +83,6 @@ public class JapanDef extends ApplicationAdapter {
 		}
 
 		shapeRenderer.end();
-		batch.end();
 	}
 	
 	@Override

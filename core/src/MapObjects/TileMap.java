@@ -162,7 +162,7 @@ public class TileMap {
 
         for(int cell = 0; cell < possibleCells.size(); cell++){
             for(int point = 0; point < possibleCells.get(cell).getPoints().size(); point++){
-                if(shortestDistance > findPointDistance(newPoint, possibleCells.get(cell).getPoints().get(point))){
+                if(shortestDistance > findPointDistance(path.get(path.size() - 1), possibleCells.get(cell).getPoints().get(point))){
                     newCell = possibleCells.get(cell);
                     shortestDistance = findPointDistance(newPoint, possibleCells.get(cell).getPoints().get(point));
                     newPoint = possibleCells.get(cell).getPoints().get(point);
@@ -205,11 +205,11 @@ public class TileMap {
     public void findStartAndEndPoint(){
         Cell startCell = cells[startCellX][startCellY], endCell = cells[endCellX][endCellY];
 
-        this.startPoint = findClosestToBorderPoint(startCell, startCellX, startCellY);
-        this.endPoint = findClosestToBorderPoint(endCell, endCellX, endCellY);
+        this.startPoint = findClosestToBorderPoint(startCell);
+        this.endPoint = findClosestToBorderPoint(endCell);
     }
 
-    public Vector2 findClosestToBorderPoint(Cell cell, int cellX, int cellY){
+    public Vector2 findClosestToBorderPoint(Cell cell){
         Vector2 currentClosestPoint = cell.getPoints().get(0);
         float minDistanceToBorder = cell.getPoints().get(0).x;
 
