@@ -7,16 +7,7 @@ import java.util.ArrayList;
 public class Tile {
     private String texturePath;
     private int width, height, id;
-    private Vector2 mainPoint;
-    private ArrayList<Vector2> points = new ArrayList<Vector2>();
-
-    public Vector2 getMainPoint() {
-        return mainPoint;
-    }
-
-    public void setMainPoint(Vector2 mainPoint) {
-        this.mainPoint = mainPoint;
-    }
+    private ArrayList<Vector2> points = new ArrayList<>();
 
     public ArrayList<Vector2> getPoints() {
         return points;

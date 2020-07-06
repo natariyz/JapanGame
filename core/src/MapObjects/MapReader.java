@@ -45,6 +45,7 @@ public class MapReader {
         private String currentElement = "";
         private Tile tile;
         private String tileSetPath;
+        private Vector2 mainPoint;
 
         private TileSetXMLHandler(TileSet tileSet, String tileSetPath){
             this.tileSet = tileSet;
@@ -65,17 +66,18 @@ public class MapReader {
                 tile.setTexturePath(tileSetPath + "/" + attributes.getValue("source"));
             }
             if(qName.equals("object")){
-                tile.setMainPoint(new Vector2(
+                mainPoint = new Vector2(
                         Float.parseFloat(attributes.getValue("x")),
-                        Float.parseFloat(attributes.getValue("y"))
-                ));
+                        Float.parseFloat(attributes.getValue("y")));
             }
             if(qName.equals("polyline")){
                 String allPoints = attributes.getValue("points");
                 String [] splitedPoints = allPoints.split(" ");
                 for(int index = 0; index < splitedPoints.length; index++){
                     String [] point = splitedPoints[index].split(",");
-                    tile.getPoints().add(new Vector2(Float.parseFloat(point[0]), Float.parseFloat(point[1])));
+                    tile.getPoints().add(new Vector2(
+                            Float.parseFloat(point[0]) + mainPoint.x,
+                            Float.parseFloat(point[1]) + mainPoint.y));
                 }
             }
         }

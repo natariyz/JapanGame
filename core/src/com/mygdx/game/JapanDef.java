@@ -23,7 +23,7 @@ public class JapanDef extends ApplicationAdapter {
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
 	private ShapeRenderer shapeRenderer;
-	private long startTime;
+	private final double zoomValue = 0.1;
 
 	public JapanDef(GameConfig gameConfig) {
 		this.gameConfig = gameConfig;
@@ -49,8 +49,6 @@ public class JapanDef extends ApplicationAdapter {
         }
 
 		Gdx.input.setInputProcessor(new GameScreenInputProcessor());
-
-        startTime = System.currentTimeMillis();
 	}
 
 	@Override
@@ -62,7 +60,7 @@ public class JapanDef extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 
-		level.update((System.currentTimeMillis() - startTime) / 1000);
+		level.update(Gdx.graphics.getDeltaTime());
 		level.draw(batch);
 
 		batch.end();
@@ -96,7 +94,7 @@ public class JapanDef extends ApplicationAdapter {
 
 		@Override
 		public boolean scrolled(int amount) {
-			camera.zoom += 0.1 * amount;
+			camera.zoom += zoomValue * amount;
 			return false;
 		}
 

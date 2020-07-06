@@ -10,9 +10,8 @@ public class Level {
     private String id;
     private int defaultSpawnDelay;
     private TileMap map;
-    private ArrayList<DefenceWave> waves = new ArrayList<DefenceWave>();
-    private ArrayList<Enemy> activeEnemies = new ArrayList<Enemy>();
-    private float lastUpdate = 0;
+    private ArrayList<DefenceWave> waves = new ArrayList<>();
+    private ArrayList<Enemy> activeEnemies = new ArrayList<>();
 
     public void update(float levelTime){
         for(int wave = 0; wave < waves.size(); wave++){
@@ -31,9 +30,8 @@ public class Level {
         }
 
         for(int enemy = 0; enemy < activeEnemies.size(); enemy++){
-            if(activeEnemies.get(enemy).move(map.getPath(), levelTime - lastUpdate) == true) activeEnemies.remove(enemy);
+            if(activeEnemies.get(enemy).move(map.getPath(), levelTime)) activeEnemies.remove(enemy);
         }
-        lastUpdate = levelTime;
     }
 
     public void draw(SpriteBatch batch){

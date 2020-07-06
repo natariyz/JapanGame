@@ -56,150 +56,150 @@ public class TileMap {
 
                 cells[x][y].setSprite(sprite);
 
-                ArrayList<Vector2> points = new ArrayList<Vector2>();
-
-                for(int point = 0; point < currentTile.getPoints().size(); point++){
-
-                    Vector2 pointCoords = new Vector2(
-                            currentTile.getPoints().get(point).x + currentTile.getMainPoint().x,
-                            currentTile.getPoints().get(point).y + currentTile.getMainPoint().y
-                    );
-
-                    if(isFlippedDiagonally){
-                        if(pointCoords.x < tileWidth / 2 && pointCoords.y < tileHeight / 2){
-                            pointCoords = new Vector2(tileHeight - pointCoords.y, pointCoords.x);
-                        }
-
-                        else if(pointCoords.x < tileWidth / 2 && pointCoords.y > tileHeight / 2){
-                            pointCoords = new Vector2(tileHeight - pointCoords.y, pointCoords.x);
-                        }
-
-                        else if(pointCoords.x > tileWidth / 2 && pointCoords.y > tileHeight / 2){
-                            pointCoords = new Vector2(
-                                    tileWidth - (tileHeight - pointCoords.y),
-                                    tileWidth - pointCoords.x
-                            );
-                        }
-
-                        else if(pointCoords.x > tileWidth / 2 && pointCoords.y < tileHeight / 2){
-                            pointCoords = new Vector2(tileHeight - pointCoords.y, pointCoords.x);
-                        }
-                    }
-
-                    if(isFlippedHorizontally){
-                        pointCoords.x = tileWidth - pointCoords.x;
-                    }
-
-                    if (isFlippedVertically){
-                        pointCoords.y = tileHeight - pointCoords.y;
-                    }
-
-                    points.add(new Vector2(
-                            sprite.getX() + pointCoords.x,
-                            sprite.getY() + (tileHeight - pointCoords.y)
-                    ));
-                }
-                if(!points.isEmpty()) cells[x][y].setPoints(points);
+                flipPoints(currentTile, cells[x][y], isFlippedDiagonally, isFlippedHorizontally, isFlippedVertically);
             }
         }
         findStartAndEndPoint();
-        path = findAllPath();
+        path = buildPath();
     }
 
-    public ArrayList<Vector2> findAllPath(){
-        ArrayList<Vector2> path = new ArrayList<Vector2>();
+    public void flipPoints(Tile tile, Cell cell, boolean isFlippedDiagonally, boolean isFlippedHorizontally, boolean isFlippedVertically){
+        ArrayList<Vector2> points = new ArrayList<>();
+        Sprite sprite = cell.getSprite();
 
-        ArrayList<Vector2> currentCellPoints = new ArrayList<Vector2>();
-        currentCellPoints.addAll(cells[startCellX][startCellY].getPoints());
-        path.add(startPoint);
-        currentCellPoints.remove(startPoint);
+        for(int point = 0; point < tile.getPoints().size(); point++){
 
-        while(!currentCellPoints.isEmpty()){
-            findClosestTilePoint(path, currentCellPoints);
+            Vector2 pointCoords = new Vector2(tile.getPoints().get(point).x, tile.getPoints().get(point).y);
+
+            if(isFlippedDiagonally){
+                if(pointCoords.x < tileWidth / 2 && pointCoords.y < tileHeight / 2){
+                    pointCoords = new Vector2(tileHeight - pointCoords.y, pointCoords.x);
+                }
+
+                else if(pointCoords.x < tileWidth / 2 && pointCoords.y > tileHeight / 2){
+                    pointCoords = new Vector2(tileHeight - pointCoords.y, pointCoords.x);
+                }
+
+                else if(pointCoords.x > tileWidth / 2 && pointCoords.y > tileHeight / 2){
+                    pointCoords = new Vector2(
+                            tileWidth - (tileHeight - pointCoords.y),
+                            tileWidth - pointCoords.x
+                    );
+                }
+
+                else if(pointCoords.x > tileWidth / 2 && pointCoords.y < tileHeight / 2){
+                    pointCoords = new Vector2(tileHeight - pointCoords.y, pointCoords.x);
+                }
+            }
+
+            if(isFlippedHorizontally){
+                pointCoords.x = tileWidth - pointCoords.x;
+            }
+
+            if (isFlippedVertically){
+                pointCoords.y = tileHeight - pointCoords.y;
+            }
+
+            points.add(new Vector2(
+                    sprite.getX() + pointCoords.x,
+                    sprite.getY() + (tileHeight - pointCoords.y)
+            ));
         }
+        if(!points.isEmpty()) cell.setPoints(points);
+    }
 
-        findClosestToPointTile(startCellX, startCellY, path);
+    public ArrayList<Vector2> buildPath(){
+        ArrayList<Vector2> path = new ArrayList<>();
+
+        findNextPoint(path, null, startCellX, startCellY);
+
+        findNextCell(startCellX, startCellY, path);
 
         return path;
     }
 
-    public void findClosestToPointTile(int currentCellX, int currentCellY, ArrayList<Vector2> path){
-        Cell newCell;
-        Vector2 newPoint;
-        double shortestDistance;
-        ArrayList<Cell> possibleCells = new ArrayList<Cell>();
-
-        if(currentCellX - 1 >= 0){
-            Cell cell = cells[currentCellX-1][currentCellY];
-            if(cell.getPoints() != null && !path.contains(cell.getPoints().get(0))){
-                possibleCells.add(cell);
-            }
-        }
-        if(currentCellX + 1 < mapWidth){
-            Cell cell = cells[currentCellX + 1][currentCellY];
-            if(cell.getPoints() != null && !path.contains(cell.getPoints().get(0))){
-                possibleCells.add(cell);
-            }
-        }
-        if(currentCellY - 1 >= 0){
-            Cell cell = cells[currentCellX][currentCellY - 1];
-            if(cell.getPoints() != null && !path.contains(cell.getPoints().get(0))){
-                possibleCells.add(cell);
-            }
-        }
-        if(currentCellY + 1 < mapHeight){
-            Cell cell = cells[currentCellX][currentCellY + 1];
-            if(cell.getPoints() != null && !path.contains(cell.getPoints().get(0))){
-                possibleCells.add(cell);
-            }
+    public void findNextPoint(ArrayList<Vector2> path, ArrayList<Vector2> currentCellPoints, int cellX, int cellY){
+        if(cellX == startCellX && cellY == startCellY){
+            currentCellPoints = new ArrayList<>(cells[startCellX][startCellY].getPoints());
+            path.add(startPoint);
+            currentCellPoints.remove(startPoint);
         }
 
-        if(possibleCells.isEmpty()) return;
-
-        newCell = possibleCells.get(0);
-        newPoint = newCell.getPoints().get(0);
-        shortestDistance = findPointDistance(path.get(path.size() - 1), newPoint);
-
-        for(int cell = 0; cell < possibleCells.size(); cell++){
-            for(int point = 0; point < possibleCells.get(cell).getPoints().size(); point++){
-                if(shortestDistance > findPointDistance(path.get(path.size() - 1), possibleCells.get(cell).getPoints().get(point))){
-                    newCell = possibleCells.get(cell);
-                    shortestDistance = findPointDistance(newPoint, possibleCells.get(cell).getPoints().get(point));
-                    newPoint = possibleCells.get(cell).getPoints().get(point);
-                }
-            }
-        }
-
-        ArrayList<Vector2> currentCellPoints = new ArrayList<Vector2>();
-        currentCellPoints.addAll(newCell.getPoints());
-        path.add(newPoint);
-        currentCellPoints.remove(newPoint);
-        while(!currentCellPoints.isEmpty())
-        {
-            findClosestTilePoint(path, currentCellPoints);
-        }
-
-        findClosestToPointTile(newCell.getX(), newCell.getY(), path);
-    }
-
-    public void findClosestTilePoint(ArrayList<Vector2> path, ArrayList<Vector2> currentCellPoints){
         Vector2 currentPoint = null;
         double shortestDistance = 0;
 
         for(int point = 0; point < currentCellPoints.size(); point++){
             if(currentPoint == null){
                 currentPoint = currentCellPoints.get(point);
-                shortestDistance = findPointDistance(path.get(path.size() - 1), currentPoint);
+                shortestDistance = currentPoint.dst(path.get(path.size() - 1));
             }
             else {
-                if(shortestDistance > findPointDistance(path.get(path.size() - 1), currentCellPoints.get(point))){
+                if(shortestDistance > currentCellPoints.get(point).dst(path.get(path.size() - 1))){
                     currentPoint = currentCellPoints.get(point);
-                    shortestDistance = findPointDistance(path.get(path.size() - 1), currentPoint);
+                    shortestDistance = currentPoint.dst(path.get(path.size() - 1));
                 }
             }
         }
         path.add(currentPoint);
         currentCellPoints.remove(currentPoint);
+
+        if(!currentCellPoints.isEmpty()) findNextPoint(path, currentCellPoints, cellX, cellY);
+        findNextCell(cellX, cellY, path);
+    }
+
+    public void findNextCell(int currentCellX, int currentCellY, ArrayList<Vector2> path){
+        ArrayList<Cell> borderingCells = new ArrayList<>();
+
+        if(currentCellX - 1 >= 0){
+            Cell cell = cells[currentCellX-1][currentCellY];
+            if(cell.getPoints() != null && !path.contains(cell.getPoints().get(0))){
+                borderingCells.add(cell);
+            }
+        }
+        if(currentCellX + 1 < mapWidth){
+            Cell cell = cells[currentCellX + 1][currentCellY];
+            if(cell.getPoints() != null && !path.contains(cell.getPoints().get(0))){
+                borderingCells.add(cell);
+            }
+        }
+        if(currentCellY - 1 >= 0){
+            Cell cell = cells[currentCellX][currentCellY - 1];
+            if(cell.getPoints() != null && !path.contains(cell.getPoints().get(0))){
+                borderingCells.add(cell);
+            }
+        }
+        if(currentCellY + 1 < mapHeight){
+            Cell cell = cells[currentCellX][currentCellY + 1];
+            if(cell.getPoints() != null && !path.contains(cell.getPoints().get(0))){
+                borderingCells.add(cell);
+            }
+        }
+
+        if(borderingCells.isEmpty()) return;
+
+        Cell newCell = borderingCells.get(0);
+        Vector2 newPoint = newCell.getPoints().get(0);
+        double shortestDistance = newPoint.dst(path.get(path.size() - 1));
+
+        for(int cell = 0; cell < borderingCells.size(); cell++){//проходим по всем точкам соседних клеток и ищем самую ближнюю к последней точке пути
+            for(int point = 0; point < borderingCells.get(cell).getPoints().size(); point++){
+                Vector2 currentPoint = borderingCells.get(cell).getPoints().get(point);
+                if(shortestDistance > currentPoint.dst(path.get(path.size() - 1))){
+                    newCell = borderingCells.get(cell);
+                    shortestDistance = currentPoint.dst(newPoint);
+                    newPoint = currentPoint;
+                }
+            }
+        }
+
+        ArrayList<Vector2> cellPoints = new ArrayList<>(newCell.getPoints());
+        path.add(newPoint);
+        cellPoints.remove(newPoint);
+
+        while(!cellPoints.isEmpty())
+        {
+            findNextPoint(path, cellPoints, newCell.getX(), newCell.getY());
+        }
     }
 
     public void findStartAndEndPoint(){
@@ -219,7 +219,7 @@ public class TileMap {
                 currentClosestPoint = newPoint;
                 minDistanceToBorder = newPoint.x;
             }
-            if(mapWidth * tileWidth - newPoint.x < minDistanceToBorder){
+            if(mapWidth * tileWidth - newPoint.x < minDistanceToBorder){ //mapWidth * tileWidth ширина экрана
                 currentClosestPoint = newPoint;
                 minDistanceToBorder = mapWidth * tileWidth - newPoint.x;
             }
@@ -227,7 +227,7 @@ public class TileMap {
                 currentClosestPoint = newPoint;
                 minDistanceToBorder = newPoint.y;
             }
-            if(mapHeight * tileHeight - newPoint.y < minDistanceToBorder){
+            if(mapHeight * tileHeight - newPoint.y < minDistanceToBorder){//а тут длина
                 currentClosestPoint = newPoint;
                 minDistanceToBorder = mapHeight * tileHeight - newPoint.y;
             }
@@ -235,8 +235,8 @@ public class TileMap {
         return  currentClosestPoint;
     }
 
-    public static double findPointDistance(Vector2 p1, Vector2 p2){
-        return Math.sqrt(Math.pow((p2.x - p1.x), 2) + Math.pow((p2.y - p1.y),2));
+    public static double findPointDistance(float x1, float y1, float x2, float y2){
+        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 
     public void draw(SpriteBatch batch){

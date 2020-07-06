@@ -79,45 +79,16 @@ public class LevelReader {
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-            if(qName.equals("DefenceLevel")){
-                level.setId(attributes.getValue("id"));
-                level.setDefaultSpawnDelay(Integer.parseInt(attributes.getValue("defaultSpawnDelay")));
-                try {
-                    MapReader parser = new MapReader();
-                    level.setMap(parser.readMap(attributes.getValue("map")));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (SAXException e) {
-                    e.printStackTrace();
-                } catch (ParserConfigurationException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            if(qName.equals("DefenceWave")){
-                defenceWave = new DefenceWave();
-                String spawnDelay = attributes.getValue("spawnDelay");
-                defenceWave.setSpawnDelay(spawnDelay == null ? level.getDefaultSpawnDelay() : Integer.parseInt(spawnDelay));
-                String startTimeStringValue = attributes.getValue("startTime");
-                if(startTimeStringValue != null) defenceWave.setStartTime(Integer.parseInt(startTimeStringValue));
-                else{
-                    DefenceWave previousDefenceWave = level.getWaves().get(level.getWaves().size() - 1);
-                    int startTime = previousDefenceWave.getStartTime() + previousDefenceWave.getSpawnDelay();
-                    for (int groupIndex = 0; groupIndex < previousDefenceWave.getEnemyGroups().size(); groupIndex ++){
-                        startTime += previousDefenceWave.getSpawnDelay() * previousDefenceWave.getEnemyGroups().get(groupIndex).getCount();
-                    }
-                    defenceWave.setStartTime(startTime);
-                }
-            }
-
-            if(qName.equals("EnemyGroup")){
-                enemyGroup = new EnemyGroup();
-                enemyGroup.setCount(Integer.parseInt(attributes.getValue("count")));
-                for(int enemyIndex = 0; enemyIndex < enemies.size(); enemyIndex++){
-                    if(attributes.getValue("enemyId").equals(enemies.get(enemyIndex).getId())){
-                        enemyGroup.setEnemy(enemies.get(enemyIndex).copy());
-                    }
-                }
+            switch (qName){
+                case ("DefenceLevel"):
+                    readLevel(attributes);
+                    break;
+                case ("DefenceWave"):
+                    readWave(attributes);
+                    break;
+                case ("EnemyGroup"):
+                    readEnemyGroup(attributes);
+                    break;
             }
         }
 
@@ -128,6 +99,47 @@ public class LevelReader {
             }
             if(qName.equals("DefenceWave")){
                 level.getWaves().add(defenceWave);
+            }
+        }
+
+        private void readLevel(Attributes attributes){
+            level.setId(attributes.getValue("id"));
+            level.setDefaultSpawnDelay(Integer.parseInt(attributes.getValue("defaultSpawnDelay")));
+            try {
+                MapReader parser = new MapReader();
+                level.setMap(parser.readMap(attributes.getValue("map")));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (SAXException e) {
+                e.printStackTrace();
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void readWave(Attributes attributes){
+            defenceWave = new DefenceWave();
+            String spawnDelay = attributes.getValue("spawnDelay");
+            defenceWave.setSpawnDelay(spawnDelay == null ? level.getDefaultSpawnDelay() : Integer.parseInt(spawnDelay));
+            String startTimeStringValue = attributes.getValue("startTime");
+            if(startTimeStringValue != null) defenceWave.setStartTime(Integer.parseInt(startTimeStringValue));
+            else{
+                DefenceWave previousDefenceWave = level.getWaves().get(level.getWaves().size() - 1);
+                int startTime = previousDefenceWave.getStartTime() + previousDefenceWave.getSpawnDelay();
+                for (int groupIndex = 0; groupIndex < previousDefenceWave.getEnemyGroups().size(); groupIndex ++){
+                    startTime += previousDefenceWave.getSpawnDelay() * previousDefenceWave.getEnemyGroups().get(groupIndex).getCount();
+                }
+                defenceWave.setStartTime(startTime);
+            }
+        }
+
+        private void readEnemyGroup(Attributes attributes){
+            enemyGroup = new EnemyGroup();
+            enemyGroup.setCount(Integer.parseInt(attributes.getValue("count")));
+            for(int enemyIndex = 0; enemyIndex < enemies.size(); enemyIndex++){
+                if(attributes.getValue("enemyId").equals(enemies.get(enemyIndex).getId())){
+                    enemyGroup.setEnemy(enemies.get(enemyIndex).copy());
+                }
             }
         }
     }
