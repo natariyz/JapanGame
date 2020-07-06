@@ -12,8 +12,10 @@ public class Level {
     private TileMap map;
     private ArrayList<DefenceWave> waves = new ArrayList<>();
     private ArrayList<Enemy> activeEnemies = new ArrayList<>();
+    private float levelTime = 0f;
 
-    public void update(float levelTime){
+    public void update(float deltaTime){
+        levelTime += deltaTime;
         for(int wave = 0; wave < waves.size(); wave++){
             DefenceWave defenceWave = waves.get(wave);
             if(defenceWave.getStartTime() + defenceWave.getSpawnDelay() * defenceWave.getSpawnedEnemiesCount() < levelTime){
@@ -30,7 +32,7 @@ public class Level {
         }
 
         for(int enemy = 0; enemy < activeEnemies.size(); enemy++){
-            if(activeEnemies.get(enemy).move(map.getPath(), levelTime)) activeEnemies.remove(enemy);
+            if(activeEnemies.get(enemy).move(map.getPath(), deltaTime)) activeEnemies.remove(enemy);
         }
     }
 

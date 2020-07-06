@@ -60,6 +60,7 @@ public class JapanDef extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 
+
 		level.update(Gdx.graphics.getDeltaTime());
 		level.draw(batch);
 
