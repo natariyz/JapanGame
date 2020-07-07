@@ -3,6 +3,7 @@ package LevelObjects;
 import GameObjects.Enemy;
 import MapObjects.TileMap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 
@@ -23,6 +24,7 @@ public class Level {
                     EnemyGroup enemyGroup = defenceWave.getEnemyGroups().get(0);
                     Enemy enemy = enemyGroup.getEnemy().copy();
                     enemy.getSprite().setPosition(map.getStartPoint().x, map.getStartPoint().y);
+                    enemy.setPosition(new Vector2(enemy.getSprite().getX(), enemy.getSprite().getY()));
                     activeEnemies.add(enemy);
                     enemyGroup.setCount(enemyGroup.getCount() - 1);
                     if (enemyGroup.getCount() < 1) defenceWave.getEnemyGroups().remove(0);

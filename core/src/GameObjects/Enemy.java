@@ -11,6 +11,7 @@ public class Enemy {
     private int hp, moveSpeed;
     private Sprite sprite;
     private int movingToPoint = 0;
+    private Vector2 position;
 
     public Enemy copy(){
         Enemy enemy = new Enemy();
@@ -29,13 +30,16 @@ public class Enemy {
         double sin = from.dst(to) / Math.abs(from.x - to.x);//отношение гипотенузы к противолежащему катету, прямоугольника гипотенуза которого отрезок от первой точки ко второй
         double cos = from.dst(to) / Math.abs(from.y - to.y);//тоже самое только прилежащий катет
 
-        double distanceToPoint = TileMap.findPointDistance(sprite.getX(), sprite.getY(), to.x, to.y);//TODO asd
+        double distanceToPoint = position.dst(to);
 
         if(distance > distanceToPoint){//если расстояние, которое может пройти враг больше, чем расстояние до точки, то перемещаем его на точку и вызываем move для оставшегося времени
 
             float timeLeft = (float)(distance - distanceToPoint) / moveSpeed;
 
             sprite.setPosition(to.x, to.y);
+
+            position.x = sprite.getX();
+            position.y = sprite.getY();
 
             movingToPoint += 1;
 
@@ -48,7 +52,18 @@ public class Enemy {
                 to.x - from.x > 0 ? (float)(distance / sin) : -(float)(distance / sin), // если точка к которой идет враг слева, то перемещаем с отрицательным значением и наоборот
                 to.y - from.y > 0 ? (float)(distance / cos) : -(float)(distance / cos));
 
+        position.x = sprite.getX();
+        position.y = sprite.getY();
+
         return false;
+    }
+
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    public void setPosition(Vector2 position) {
+        this.position = position;
     }
 
     public String getId() {

@@ -235,10 +235,6 @@ public class TileMap {
         return  currentClosestPoint;
     }
 
-    public static double findPointDistance(float x1, float y1, float x2, float y2){
-        return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-    }
-
     public void draw(SpriteBatch batch){
         for (int x = 0; x < mapWidth; x++){
             for(int y = 0; y < mapHeight; y++){
