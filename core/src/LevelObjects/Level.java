@@ -41,7 +41,7 @@ public class Level {
     public void draw(SpriteBatch batch){
         map.draw(batch);
         for(int enemy = 0; enemy < activeEnemies.size(); enemy++){
-            activeEnemies.get(enemy).getSprite().draw(batch);
+            activeEnemies.get(enemy).draw(batch);
         }
     }
 

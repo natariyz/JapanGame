@@ -1,25 +1,35 @@
 package GameObjects;
 
-import MapObjects.TileMap;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-
 import java.util.ArrayList;
 
 public class Enemy {
     private String id;
-    private int hp, moveSpeed;
+    private int maxHp, currentHp, moveSpeed;
     private Sprite sprite;
     private int movingToPoint = 0;
     private Vector2 position;
+    private HpBar hpBar;
+
+    public Enemy(){
+        hpBar = new HpBar(this);
+    }
 
     public Enemy copy(){
         Enemy enemy = new Enemy();
         enemy.setId(id);
-        enemy.setHp(hp);
+        enemy.setMaxHp(maxHp);
+        enemy.setCurrentHp(currentHp);
         enemy.setMoveSpeed(moveSpeed);
         enemy.setSprite(new Sprite(sprite));
         return enemy;
+    }
+
+    public void draw(SpriteBatch batch){
+        sprite.draw(batch);
+        hpBar.draw(batch);
     }
 
     public boolean move(ArrayList<Vector2> path, float time){
@@ -58,6 +68,14 @@ public class Enemy {
         return false;
     }
 
+    public int getMaxHp() {
+        return maxHp;
+    }
+
+    public void setMaxHp(int maxHp) {
+        this.maxHp = maxHp;
+    }
+
     public Vector2 getPosition() {
         return position;
     }
@@ -82,12 +100,12 @@ public class Enemy {
         this.sprite = sprite;
     }
 
-    public int getHp() {
-        return hp;
+    public int getCurrentHp() {
+        return currentHp;
     }
 
-    public void setHp(int hp) {
-        this.hp = hp;
+    public void setCurrentHp(int currentHp) {
+        this.currentHp = currentHp;
     }
 
     public int getMoveSpeed() {

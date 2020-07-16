@@ -56,7 +56,8 @@ public class LevelReader {
                 Enemy enemy = new Enemy();
 
                 enemy.setId(attributes.getValue("id"));
-                enemy.setHp(Integer.parseInt(attributes.getValue("hp")));
+                enemy.setCurrentHp(Integer.parseInt(attributes.getValue("hp")));
+                enemy.setMaxHp(Integer.parseInt(attributes.getValue("hp")));
                 enemy.setMoveSpeed(Integer.parseInt(attributes.getValue("moveSpeed")));
                 Texture enemyTexture = new Texture(attributes.getValue("image"));
                 enemy.setSprite(new Sprite(enemyTexture));
