@@ -15,11 +15,8 @@ import com.mygdx.game.JapanGame;
 public class MenuScreen implements Screen {
 
     private Stage menuStage;
-    private JapanGame japanGame;
 
-    public MenuScreen(JapanGame japanGame) {
-        this.japanGame = japanGame;
-
+    public MenuScreen(JapanGame japanGame, boolean isPause) {
         menuStage = new Stage(new ScreenViewport());
 
         Label title = new Label("Main menu", japanGame.getGameSkin());
@@ -27,12 +24,14 @@ public class MenuScreen implements Screen {
         TextButton resumeButton = new TextButton("Resume", japanGame.getGameSkin());
         resumeButton.addListener(new InputListener(){
             @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                japanGame.resume();
+            public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+                ScreenManager screenManager = japanGame.getScreenManager();
+
+                screenManager.popScreen();
             }
 
             @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 return true;
             }
         });
@@ -68,17 +67,19 @@ public class MenuScreen implements Screen {
             }
         });
 
-        Table table = new Table();
-        table.add(title);
-        table.row();
-        table.add(resumeButton);
-        table.row();
-        table.add(playButton);
-        table.row();
-        table.add(exitButton);
-        table.setFillParent(true);
-
-        menuStage.addActor(table);
+        Table menuTable = new Table();
+        menuTable.add(title);
+        menuTable.row();
+        if (isPause) {
+            menuTable.add(resumeButton);
+            menuTable.row();
+        }
+        menuTable.add(playButton);
+        menuTable.row();
+        menuTable.add(exitButton);
+        menuTable.row();
+        menuTable.setFillParent(true);
+        menuStage.addActor(menuTable);
     }
 
     @Override
@@ -90,6 +91,8 @@ public class MenuScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+
 
         menuStage.act();
         menuStage.draw();

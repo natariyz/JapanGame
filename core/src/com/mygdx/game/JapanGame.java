@@ -29,14 +29,14 @@ public class JapanGame extends Game {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, gameConfig.getScreenWidth(), gameConfig.getScreenHeight());
 
-        setScreen(new MenuScreen(this));
+        setScreen(new MenuScreen(this, false));
 	}
 
 	@Override
 	public void pause() {
 		super.pause();
 
-		screenManager.openScreen(new MenuScreen(this));
+		screenManager.openScreen(new MenuScreen(this, true));
 	}
 
 	@Override
