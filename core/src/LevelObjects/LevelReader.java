@@ -1,9 +1,9 @@
 package LevelObjects;
 
+import GameObjects.Enemy;
 import MapObjects.MapReader;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import GameObjects.Enemy;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;

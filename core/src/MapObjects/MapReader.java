@@ -9,6 +9,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MapReader {
 
@@ -96,6 +97,7 @@ public class MapReader {
         private TileMap map;
         private StringBuilder mapDataBuilder = new StringBuilder();
         private String currentElement = "";
+        private Vector2 polygonStartPoint;
 
         public MapXMLHandler(TileMap map){
             this.map = map;
@@ -120,6 +122,24 @@ public class MapReader {
                     map.setEndCellX((int) Float.parseFloat(attributes.getValue("x")) / map.getTileWidth());
                     map.setEndCellY((int) Float.parseFloat(attributes.getValue("y")) / map.getTileHeight());
                 }
+                if (attributes.getValue("type").equals("roadPolygon")){
+                    polygonStartPoint = new Vector2(
+                            Float.parseFloat(attributes.getValue("x")),
+                            Float.parseFloat(attributes.getValue("y"))
+                    );
+                }
+            }
+            if(qName.equals("polygon")){
+                ArrayList<Vector2> roadPolygon = new ArrayList<>();
+                String allPoints = attributes.getValue("points");
+                String [] dividedPoints = allPoints.split(" ");
+                for(int point = 0; point < dividedPoints.length; point++){
+                    String [] newPoint = dividedPoints[point].split(",");
+                    roadPolygon.add(new Vector2(
+                            polygonStartPoint.x + Float.parseFloat(newPoint[0]),
+                            polygonStartPoint.y + Float.parseFloat(newPoint[1])));
+                }
+                map.setRoadPolygon(roadPolygon);
             }
         }
 

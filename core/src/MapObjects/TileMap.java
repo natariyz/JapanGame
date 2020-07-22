@@ -3,6 +3,7 @@ package MapObjects;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public class TileMap {
     private Vector2 startPoint, endPoint;
     private int startCellX, startCellY, endCellX, endCellY;
     private ArrayList<Vector2> path;
+    private ArrayList<Vector2> roadPolygon;
 
     public static final long flippedHorizontallyFlag = 0x80000000L;
     public static final long flippedVerticallyFlag = 0x40000000L;
@@ -321,5 +323,13 @@ public class TileMap {
 
     public Cell[][] getCells() {
         return cells;
+    }
+
+    public ArrayList<Vector2> getRoadPolygon() {
+        return roadPolygon;
+    }
+
+    public void setRoadPolygon(ArrayList<Vector2> roadPolygon) {
+        this.roadPolygon = roadPolygon;
     }
 }

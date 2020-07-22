@@ -10,10 +10,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Vector;
 
 public class JapanDef extends ApplicationAdapter {
 	private GameConfig gameConfig;
@@ -80,6 +83,13 @@ public class JapanDef extends ApplicationAdapter {
 				}
 			}
 		}
+
+		ArrayList<Vector2> roadPolygon = level.getMap().getRoadPolygon();
+
+		for(int point = 0; point < roadPolygon.size() - 1; point++){
+			shapeRenderer.line(roadPolygon.get(point), roadPolygon.get(point + 1));
+		}
+		shapeRenderer.line(roadPolygon.get(0), roadPolygon.get(roadPolygon.size() - 1));
 
 		shapeRenderer.end();
 	}
