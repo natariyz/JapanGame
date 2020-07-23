@@ -5,7 +5,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFileHandle;
 import com.mygdx.game.GameConfig;
-import com.mygdx.game.JapanDef;
+import com.mygdx.game.JapanGame;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -19,7 +19,7 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.width = gameConfig.getScreenWidth();
 		config.height = gameConfig.getScreenHeight();
-		new LwjglApplication(new JapanDef(gameConfig), config);
+		new LwjglApplication(new JapanGame(gameConfig), config);
 	}
 
 	private final static GameConfig.ConfigLoader desktopConfigLoader = new GameConfig.ConfigLoader() {
