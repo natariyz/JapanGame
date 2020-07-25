@@ -1,5 +1,6 @@
 package MapObjects;
 
+import com.badlogic.gdx.math.Vector2;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -8,6 +9,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MapReader {
 
@@ -44,6 +46,7 @@ public class MapReader {
         private String currentElement = "";
         private Tile tile;
         private String tileSetPath;
+        private Vector2 mainPoint;
 
         private TileSetXMLHandler(TileSet tileSet, String tileSetPath){
             this.tileSet = tileSet;
@@ -63,6 +66,21 @@ public class MapReader {
                 tile.setHeight(Integer.parseInt(attributes.getValue("height")));
                 tile.setTexturePath(tileSetPath + "/" + attributes.getValue("source"));
             }
+            if(qName.equals("object")){
+                mainPoint = new Vector2(
+                        Float.parseFloat(attributes.getValue("x")),
+                        Float.parseFloat(attributes.getValue("y")));
+            }
+            if(qName.equals("polyline")){
+                String allPoints = attributes.getValue("points");
+                String [] splitedPoints = allPoints.split(" ");
+                for(int index = 0; index < splitedPoints.length; index++){
+                    String [] point = splitedPoints[index].split(",");
+                    tile.getPoints().add(new Vector2(
+                            Float.parseFloat(point[0]) + mainPoint.x,
+                            Float.parseFloat(point[1]) + mainPoint.y));
+                }
+            }
         }
 
         @Override
@@ -79,6 +97,7 @@ public class MapReader {
         private TileMap map;
         private StringBuilder mapDataBuilder = new StringBuilder();
         private String currentElement = "";
+        private Vector2 polygonStartPoint;
 
         public MapXMLHandler(TileMap map){
             this.map = map;
@@ -88,12 +107,40 @@ public class MapReader {
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
             currentElement = qName;
             if(qName.equals("map")){
-                map.setHeight(Integer.parseInt(attributes.getValue("height")));
-                map.setWidth(Integer.parseInt(attributes.getValue("width")));
+                map.setMapHeight(Integer.parseInt(attributes.getValue("height")));
+                map.setMapWidth(Integer.parseInt(attributes.getValue("width")));
                 map.setTileHeight(Integer.parseInt(attributes.getValue("tileheight")));
                 map.setTileWidth(Integer.parseInt(attributes.getValue("tilewidth")));
             }
             if(qName.equals("tileset")) map.getTileSet().setPath(attributes.getValue("source"));
+            if(qName.equals("object")){
+                if (attributes.getValue("type").equals("startPoint")){
+                    map.setStartCellX((int)Float.parseFloat(attributes.getValue("x")) / map.getTileWidth());
+                    map.setStartCellY((int)Float.parseFloat(attributes.getValue("y")) / map.getTileHeight());
+                }
+                if (attributes.getValue("type").equals("endPoint")){
+                    map.setEndCellX((int) Float.parseFloat(attributes.getValue("x")) / map.getTileWidth());
+                    map.setEndCellY((int) Float.parseFloat(attributes.getValue("y")) / map.getTileHeight());
+                }
+                if (attributes.getValue("type").equals("roadPolygon")){
+                    polygonStartPoint = new Vector2(
+                            Float.parseFloat(attributes.getValue("x")),
+                            Float.parseFloat(attributes.getValue("y"))
+                    );
+                }
+            }
+            if(qName.equals("polygon")){
+                ArrayList<Vector2> roadPolygon = new ArrayList<>();
+                String allPoints = attributes.getValue("points");
+                String [] dividedPoints = allPoints.split(" ");
+                for(int point = 0; point < dividedPoints.length; point++){
+                    String [] newPoint = dividedPoints[point].split(",");
+                    roadPolygon.add(new Vector2(
+                            polygonStartPoint.x + Float.parseFloat(newPoint[0]),
+                            polygonStartPoint.y + Float.parseFloat(newPoint[1])));
+                }
+                map.setRoadPolygon(roadPolygon);
+            }
         }
 
         @Override

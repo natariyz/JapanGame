@@ -1,4 +1,4 @@
-<DefenceLevel id="level_1" defaultSpawnDelay="1" map="../tilemaps/test_tilemap.tmx">
+<DefenceLevel id="level_1" defaultSpawnDelay="1" map="tilemaps/test_tilemap.tmx">
 	<waves>
 		<DefenceWave startTime="0" spawnDelay="3">
 			<enemyGroups>
