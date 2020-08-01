@@ -7,7 +7,8 @@ import java.util.ArrayList;
 public class Tile {
     private String texturePath;
     private int width, height, id;
-    private ArrayList<Vector2> points = new ArrayList<>();
+    private ArrayList<Vector2> points;
+    private ArrayList<Vector2> roadPolygon;
 
     public ArrayList<Vector2> getPoints() {
         return points;
@@ -47,5 +48,13 @@ public class Tile {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public ArrayList<Vector2> getRoadPolygon() {
+        return roadPolygon;
+    }
+
+    public void setRoadPolygon(ArrayList<Vector2> roadPolygon) {
+        this.roadPolygon = roadPolygon;
     }
 }

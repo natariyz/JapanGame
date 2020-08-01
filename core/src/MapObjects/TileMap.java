@@ -18,22 +18,21 @@ public class TileMap {
     private Vector2 startPoint, endPoint;
     private int startCellX, startCellY, endCellX, endCellY;
     private ArrayList<Vector2> path;
-    private ArrayList<Vector2> roadPolygon;
 
     public static final long flippedHorizontallyFlag = 0x80000000L;
     public static final long flippedVerticallyFlag = 0x40000000L;
     public static final long flippedDiagonallyFlag = 0x20000000L;
 
-    public void initializeCells(String mapData){
+    public void initializeCells(String mapData) {
         cells = new Cell[mapWidth][mapHeight];
 
         boolean isFlippedHorizontally, isFlippedVertically, isFlippedDiagonally;
 
         mapData = mapData.replaceAll("\n", "");
-        String [] mapDataArray = mapData.split(",");
+        String[] mapDataArray = mapData.split(",");
 
-        for(int x = 0; x < mapWidth; x++){
-            for(int y = 0; y < mapHeight; y++){
+        for (int x = 0; x < mapWidth; x++) {
+            for (int y = 0; y < mapHeight; y++) {
                 long id = Long.parseLong(mapDataArray[y * mapWidth + x]);
                 long cleanId = id & ~(flippedHorizontallyFlag | flippedVerticallyFlag | flippedDiagonallyFlag);
 
@@ -41,74 +40,77 @@ public class TileMap {
                 cells[x][y].setX(x);
                 cells[x][y].setY(y);
 
-                Tile currentTile = tileSet.getTiles().get((int)cleanId - 1);
+                Tile currentTile = tileSet.getTiles().get((int) cleanId - 1);
 
                 Texture texture = new Texture(currentTile.getTexturePath());
                 Sprite sprite = new Sprite(texture);
 
-                sprite.setBounds(x * tileWidth,(mapHeight - y - 1) * tileHeight, tileWidth, tileHeight);
+                sprite.setBounds(x * tileWidth, (mapHeight - y - 1) * tileHeight, tileWidth, tileHeight);
                 sprite.setOrigin(tileWidth / 2, tileHeight / 2);
 
                 isFlippedHorizontally = (id & flippedHorizontallyFlag) == flippedHorizontallyFlag;
                 isFlippedVertically = (id & flippedVerticallyFlag) == flippedVerticallyFlag;
                 isFlippedDiagonally = (id & flippedDiagonallyFlag) == flippedDiagonallyFlag;
 
-                if(isFlippedDiagonally) sprite.rotate(90);
+                if (isFlippedDiagonally) sprite.rotate(90);
                 sprite.flip(isFlippedHorizontally, isFlippedVertically);
 
                 cells[x][y].setSprite(sprite);
 
-                flipPoints(currentTile, cells[x][y], isFlippedDiagonally, isFlippedHorizontally, isFlippedVertically);
+                if (currentTile.getPoints() != null) {
+                    ArrayList<Vector2> flippedRoadPoints = flipPoints(currentTile.getPoints(), isFlippedDiagonally,
+                            isFlippedHorizontally, isFlippedVertically);
+                    for (int point = 0; point < flippedRoadPoints.size(); point++) {
+                        flippedRoadPoints.get(point).add(sprite.getX(), sprite.getY() + (tileHeight - 2*flippedRoadPoints.get(point).y));
+                    }
+                    cells[x][y].setPoints(flippedRoadPoints);
+                }
+                if (currentTile.getRoadPolygon() != null) {
+                    ArrayList<Vector2> flippedRoadPolygon = flipPoints(currentTile.getRoadPolygon(), isFlippedDiagonally,
+                            isFlippedHorizontally, isFlippedVertically);
+                    for (int point = 0; point < flippedRoadPolygon.size(); point++) {
+                        flippedRoadPolygon.get(point).add(sprite.getX(), sprite.getY() + (tileHeight - 2*flippedRoadPolygon.get(point).y));
+                    }
+                    cells[x][y].setRoadPolygon(flippedRoadPolygon);
+                }
             }
         }
         findStartAndEndPoint();
         path = buildPath();
     }
 
-    public void flipPoints(Tile tile, Cell cell, boolean isFlippedDiagonally, boolean isFlippedHorizontally, boolean isFlippedVertically){
+    public ArrayList<Vector2> flipPoints(ArrayList<Vector2> pointsToFlip, boolean isFlippedDiagonally, boolean isFlippedHorizontally, boolean isFlippedVertically) {
         ArrayList<Vector2> points = new ArrayList<>();
-        Sprite sprite = cell.getSprite();
 
-        for(int point = 0; point < tile.getPoints().size(); point++){
+        for (int point = 0; point < pointsToFlip.size(); point++) {
 
-            Vector2 pointCoords = new Vector2(tile.getPoints().get(point).x, tile.getPoints().get(point).y);
+            Vector2 pointCoords = new Vector2(pointsToFlip.get(point).x, pointsToFlip.get(point).y);
 
-            if(isFlippedDiagonally){
-                if(pointCoords.x < tileWidth / 2 && pointCoords.y < tileHeight / 2){
+            if (isFlippedDiagonally) {
+                if (pointCoords.x < tileWidth / 2 && pointCoords.y < tileHeight / 2) {
                     pointCoords = new Vector2(tileHeight - pointCoords.y, pointCoords.x);
-                }
-
-                else if(pointCoords.x < tileWidth / 2 && pointCoords.y > tileHeight / 2){
+                } else if (pointCoords.x < tileWidth / 2 && pointCoords.y > tileHeight / 2) {
                     pointCoords = new Vector2(tileHeight - pointCoords.y, pointCoords.x);
-                }
-
-                else if(pointCoords.x > tileWidth / 2 && pointCoords.y > tileHeight / 2){
-                    pointCoords = new Vector2(
-                            tileWidth - (tileHeight - pointCoords.y),
-                            tileWidth - pointCoords.x
-                    );
-                }
-
-                else if(pointCoords.x > tileWidth / 2 && pointCoords.y < tileHeight / 2){
+                } else if (pointCoords.x > tileWidth / 2 && pointCoords.y > tileHeight / 2) {
+                    pointCoords = new Vector2(tileHeight - pointCoords.y, pointCoords.x);
+                } else if (pointCoords.x > tileWidth / 2 && pointCoords.y < tileHeight / 2) {
                     pointCoords = new Vector2(tileHeight - pointCoords.y, pointCoords.x);
                 }
             }
 
-            if(isFlippedHorizontally){
+            if (isFlippedHorizontally) {
                 pointCoords.x = tileWidth - pointCoords.x;
             }
 
-            if (isFlippedVertically){
+            if (isFlippedVertically) {
                 pointCoords.y = tileHeight - pointCoords.y;
             }
 
-            points.add(new Vector2(
-                    sprite.getX() + pointCoords.x,
-                    sprite.getY() + (tileHeight - pointCoords.y)
-            ));
+            points.add(pointCoords);
         }
-        if(!points.isEmpty()) cell.setPoints(points);
+        return points;
     }
+
 
     public ArrayList<Vector2> buildPath(){
         ArrayList<Vector2> path = new ArrayList<>();
@@ -323,13 +325,5 @@ public class TileMap {
 
     public Cell[][] getCells() {
         return cells;
-    }
-
-    public ArrayList<Vector2> getRoadPolygon() {
-        return roadPolygon;
-    }
-
-    public void setRoadPolygon(ArrayList<Vector2> roadPolygon) {
-        this.roadPolygon = roadPolygon;
     }
 }

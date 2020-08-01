@@ -81,15 +81,15 @@ public class JapanDef extends ApplicationAdapter {
 						shapeRenderer.circle(cell.getPoints().get(point).x, cell.getPoints().get(point).y, 5);
 					}
 				}
+				if(cell.getRoadPolygon() != null){
+					ArrayList<Vector2> roadPolygon = cell.getRoadPolygon();
+					for(int point = 0; point < roadPolygon.size() - 1; point++){
+						shapeRenderer.line(roadPolygon.get(point), roadPolygon.get(point + 1));
+					}
+					shapeRenderer.line(roadPolygon.get(0), roadPolygon.get(roadPolygon.size() - 1));
+				}
 			}
 		}
-
-		ArrayList<Vector2> roadPolygon = level.getMap().getRoadPolygon();
-
-		for(int point = 0; point < roadPolygon.size() - 1; point++){
-			shapeRenderer.line(roadPolygon.get(point), roadPolygon.get(point + 1));
-		}
-		shapeRenderer.line(roadPolygon.get(0), roadPolygon.get(roadPolygon.size() - 1));
 
 		shapeRenderer.end();
 	}

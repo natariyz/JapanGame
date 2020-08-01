@@ -9,6 +9,15 @@ public class Cell {
     private int x, y;
     private Sprite sprite;
     private ArrayList<Vector2> points;
+    private ArrayList<Vector2> roadPolygon;
+
+    public ArrayList<Vector2> getRoadPolygon() {
+        return roadPolygon;
+    }
+
+    public void setRoadPolygon(ArrayList<Vector2> roadPolygon) {
+        this.roadPolygon = roadPolygon;
+    }
 
     public ArrayList<Vector2> getPoints() {
         return points;
