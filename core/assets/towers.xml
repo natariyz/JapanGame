@@ -1,0 +1,6 @@
+<Towers>
+	<towers>
+		<Tower damage="10" attackSpeed="3" radius="100" projectileSpeed="5" image="images/tower1.png"/>
+		<Tower damage="20" attackSpeed="2" radius="100" projectileSpeed="4" image="images/tower2.png"/>
+	</towers>
+</Towers>
